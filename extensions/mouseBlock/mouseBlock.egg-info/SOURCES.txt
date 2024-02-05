@@ -1,0 +1,6 @@
+mouseBlock.cpp
+setup.py
+mouseBlock.egg-info/PKG-INFO
+mouseBlock.egg-info/SOURCES.txt
+mouseBlock.egg-info/dependency_links.txt
+mouseBlock.egg-info/top_level.txt
