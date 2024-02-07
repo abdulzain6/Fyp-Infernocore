@@ -1,0 +1,6 @@
+fastapi[all]
+pymongo
+firebase-admin
+python-dotenv
+redis
+aioredis
