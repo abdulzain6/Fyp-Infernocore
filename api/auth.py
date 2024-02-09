@@ -9,6 +9,7 @@ security = HTTPBearer()
 
 
 def get_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    print("in")
     token = credentials.credentials
     try:
         return get_set_user_id(token)

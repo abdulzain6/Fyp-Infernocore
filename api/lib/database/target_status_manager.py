@@ -18,6 +18,5 @@ class TargetStatusManager:
         return self.redis_client.sismember(self.online_targets_set, target_id)
 
     def get_online_targets(self) -> list:
-        data = list(self.redis_client.smembers(self.online_targets_set))
-        logging.info(f"Getting online targets list {data}")
-        return [str(d) for d in data]
+        logging.info(f"Getting online targets list")
+        return [target_id.decode('utf-8') for target_id in self.redis_client.smembers(self.online_targets_set)]
