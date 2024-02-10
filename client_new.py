@@ -2,8 +2,6 @@ import asyncio
 import time
 import httpx
 import websockets
-import requests
-from typing import List
 from concurrent.futures import ThreadPoolExecutor
 from pydantic import BaseModel
 from datetime import datetime, timezone

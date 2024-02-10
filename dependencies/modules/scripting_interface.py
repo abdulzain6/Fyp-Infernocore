@@ -1,8 +1,8 @@
 from random import randrange
 from io import StringIO
 from contextlib import redirect_stdout
-import subprocess, os
 from .constants import *
+import subprocess, os
 
 def execute_powershell_script(script, getOutput = False, wait = False, createNewConsole = False):
     if getOutput:

