@@ -1,0 +1,11 @@
+psutil
+requests
+pyautogui
+pyperclip
+Pillow
+pynput
+swinlnk
+websockets
+httpx
+pydantic
+scapy
