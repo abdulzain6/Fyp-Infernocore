@@ -1,8 +1,6 @@
 from ctypes import wintypes
 import ctypes
-from .block_input import *
-from .clipboard import *
-from .window import *
+
 
 def reverse_mouse_button(restore = False):
     restore = int(restore)

