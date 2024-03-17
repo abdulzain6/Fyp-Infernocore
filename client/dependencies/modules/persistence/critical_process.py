@@ -1,8 +1,13 @@
+import ctypes
+import os
+import platform
 import threading
 
 import processManagement
 from ctypes import *
 from ctypes import wintypes as w 
+
+
 
 def errcheck(result, func, args):
     if result is None or result == 0:
@@ -11,7 +16,6 @@ def errcheck(result, func, args):
 
 LRESULT = c_int64
 HCURSOR = c_void_p
-
 WNDPROC = WINFUNCTYPE(LRESULT, w.HWND, w.UINT, w.WPARAM, w.LPARAM)
 
 def makeintresourcew(x):
@@ -28,8 +32,6 @@ class WNDCLASSW(Structure):
                 ('hbrBackground', w.HBRUSH), 
                 ('lpszMenuName', w.LPCWSTR), 
                 ('lpszClassName', w.LPCWSTR)]
-
-
 
 kernel32 = WinDLL('kernel32', use_last_error = True)
 kernel32.GetModuleHandleW.argtypes = w.LPCWSTR, 
@@ -77,15 +79,11 @@ gdi32.GetStockObject.restype = w.HGDIOBJ
 CW_USEDEFAULT = -2147483648
 IDI_APPLICATION = makeintresourcew(32512)
 WS_OVERLAPPEDWINDOW = 13565952
-
 CS_HREDRAW = 2
 CS_VREDRAW = 1
-
 IDC_ARROW = makeintresourcew(32512)
 WHITE_BRUSH = 0
-
 SW_SHOWNORMAL = 1
-
 WM_PAINT = 15
 WM_DESTROY = 2
 DT_SINGLELINE = 32
@@ -145,18 +143,23 @@ class CriticalProcess:
 
         return msg.wParam
 
-
-
-    @staticmethod
-    def protect_process():
-        if processManagement.isElevated() != 1:
+    def is_elevated(self) -> bool:
+        if platform.system() == "Windows":
+            try:
+                return ctypes.windll.shell32.IsUserAnAdmin() != 0
+            except:
+                return False
+        else:
+            return os.geteuid() == 0
+        
+    def protect_process(self):
+        if not self.is_elevated():
             return 0
         processManagement.protectProcess()
         return 1
 
-    @staticmethod
-    def un_protect_process():
-        if processManagement.isElevated() != 1:
+    def un_protect_process(self):
+        if not self.is_elevated():
             return 0
         processManagement.unProtectProcess()
         return 1
