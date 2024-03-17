@@ -128,9 +128,8 @@ class WebSocketClient:
                     print(f"Request failed with status code {e.response.status_code}: {e}")
                 except httpx.RequestError as e:
                     print(f"Request failed with error: {e}")
-                if attempt < retries - 1:  # Don't sleep after the last attempt
+                if attempt < retries - 1:
                     await asyncio.sleep(delay)
-                    delay *= 2  # Optional: Exponential backoff
 
     async def handle_stream_response(self, command: Command):
         stream_ws_url = f"ws://{self.base_url}/io-target/ws/stream/response?command_id={command.id}&target_id={self.target_id}&access_key={self.access_key}"

