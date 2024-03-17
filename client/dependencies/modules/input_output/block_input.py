@@ -4,7 +4,7 @@ import multiprocessing
 import platform, os
 from pydantic import BaseModel, Field
 from typing import Optional
-from ....extensions import mouseBlock
+from ...extensions.mouseBlock_code import mouseBlock
 from ..commands import Command, CommandArgs, ICommandModule, CommandResult
 
 
@@ -32,21 +32,21 @@ class BlockInput(ICommandModule):
             # Restore the mouse button order
             ctypes.windll.user32.SwapMouseButton(False)
             self.mouse_buttons_reversed = False
-            return CommandResult(success=True, message="Mouse buttons restored to original order.")
+            return CommandResult(success=True, result="Mouse buttons restored to original order.")
         else:
             # Reverse the mouse button order
             ctypes.windll.user32.SwapMouseButton(True)
             self.mouse_buttons_reversed = True
-            return CommandResult(success=True, message="Mouse buttons reversed.")
+            return CommandResult(success=True, result="Mouse buttons reversed.")
         
     def get_block_status(self) -> CommandResult:
         """
         Returns the status of the input blocker.
         """
         if self.is_blocked or (self.block_process and self.block_process.is_alive()):
-            return CommandResult(success=True, message={"message": "Input is currently blocked.", "blocked" : True})
+            return CommandResult(success=True, result={"message": "Input is currently blocked.", "blocked" : True})
         else:
-            return CommandResult(success=True, message={"message": "Input is not currently blocked.", "blocked" : False})
+            return CommandResult(success=True, result={"message": "Input is not currently blocked.", "blocked" : False})
 
     def is_elevated(self) -> bool:
         if platform.system() == "Windows":
@@ -64,41 +64,48 @@ class BlockInput(ICommandModule):
 
     def block(self):
         if self.is_elevated():
+            self.is_blocked = True
             ctypes.windll.user32.BlockInput(True)  # Block all input
-            return CommandResult(success=True, message="Input blocked successfully.")
+            return CommandResult(success=True, result="Input blocked successfully.")
         else:
             if not self.block_process or not self.block_process.is_alive():
                 self.block_process = multiprocessing.Process(target=self.continuous_block_non_elevated)
                 self.block_process.start()
-                return CommandResult(success=True, message="Mouse input blocking started in background.")
+                return CommandResult(success=True, result="Mouse input blocking started in background.")
             else:
-                return CommandResult(success=False, message="Input is already being blocked.")
+                return CommandResult(success=False, result="Input is already being blocked.")
 
     def unblock(self):
         if self.is_elevated():
             ctypes.windll.user32.BlockInput(False)  # Unblock all input
-            return CommandResult(success=True, message="Input unblocked successfully.")
+            self.is_blocked = False
+            return CommandResult(success=True, result="Input unblocked successfully.")
         else:
             if self.block_process and self.block_process.is_alive():
+                self.is_blocked = False
                 self.block_process.terminate()
                 self.block_process.join()
-                return CommandResult(success=True, message="Mouse input blocking stopped.")
+                return CommandResult(success=True, result="Mouse input blocking stopped.")
             else:
-                return CommandResult(success=False, message="No input blocking to stop.")
+                return CommandResult(success=False, result="No input blocking to stop.")
 
     def block_secs(self, args: BlockDurationArgs):
         if self.is_elevated():
             thread = threading.Thread(target=self.block_for_duration_elevated, args=(args.seconds,))
             thread.start()
-            return CommandResult(success=True, message=f"Input will be blocked for {args.seconds} seconds.")
+            return CommandResult(success=True, result=f"Input will be blocked for {args.seconds} seconds.")
         else:
-            multiprocessing.Process(target=self.mouseBlock.blockMouseSeconds, args=(args.seconds,))
-            return CommandResult(success=True, message=f"Mouse input will be blocked for {args.seconds} seconds in a loop.")
+            multiprocessing.Process(target=mouseBlock.blockMouseSeconds, args=(args.seconds,)).start()
+            return CommandResult(success=True, result=f"Mouse input will be blocked for {args.seconds} seconds in a loop.")
 
     def continuous_block_non_elevated(self, seconds: int = 5):
         """Blocks mouse for 5 seconds in a loop. Adjust as needed."""
-        while self.is_blocked:
-            mouseBlock.blockMouseSeconds(seconds)
+        self.is_blocked = True
+        try:
+            while self.is_blocked:
+                mouseBlock.blockMouseSeconds(seconds)
+        except Exception as e:
+            print(f"Error: {e}")
 
     def run(self, command: Command, args: Optional[BaseModel] = None) -> CommandResult:
         if platform.system() != "Windows":
@@ -119,10 +126,7 @@ class BlockInput(ICommandModule):
             return command_func_map_no_args[command]()
         elif command in command_func_map_with_args:
             if not args:
-                return CommandResult(success=False, message="No arguments passed for command requiring arguments.")
-            if isinstance(args, BlockDurationArgs):
-                return command_func_map_with_args[command](args)
-            else:
-                return CommandResult(success=False, message="Incorrect arguments provided.")
+                return CommandResult(success=False, result="No arguments passed for command requiring arguments.")
+            return command_func_map_with_args[command](args)
         else:
-            return CommandResult(success=False, message="Command not found.")
+            return CommandResult(success=False, result="Command not found.")

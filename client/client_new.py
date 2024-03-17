@@ -43,6 +43,7 @@ class WebSocketClient:
         self.command_queue = asyncio.Queue()
 
     async def connect_websocket(self):
+        print(f"Connecting to websocket server at {self.websocket_url}")
         while True:
             try:
                 async with websockets.connect(self.websocket_url) as websocket:
@@ -51,6 +52,7 @@ class WebSocketClient:
             except websockets.ConnectionClosed:
                 print("WebSocket connection closed, attempting to reconnect...")
             except Exception as e:
+                print(e, self.websocket_url)
                 print(f"WebSocket connection failed: {e}, retrying in 5 seconds...")
             await asyncio.sleep(5)  # Delay before attempting to reconnect
 
@@ -103,7 +105,10 @@ class WebSocketClient:
 
     def executor_function(self, command: Command) -> CommandResult:
         print(f"Executing command: {command}")
-        return command_executor(command.text, args=command.command_args) 
+        try:
+            return command_executor(command.text, args=command.command_args)
+        except Exception as e:
+            return CommandResult(result=f"Error in execution: {e}", success=False)
 
     async def send_text_response(self, response_in: RecieveTextResponse):
         retries = 3
