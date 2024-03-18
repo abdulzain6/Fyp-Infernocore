@@ -1,5 +1,4 @@
 import base64
-import multiprocessing
 from threading import Event
 from ...pygrabber.dshow_graph import FilterGraph
 
@@ -21,7 +20,6 @@ class ImgGrab:
     def set_index(self, index = 0):
         self.cameraIndex = int(index)
 
-
     def capture_image(self):
         self.graph.grab_frame()
         while True:
@@ -34,20 +32,12 @@ class ImgGrab:
     def set_image(self, image):
         self.image = image
 
-
     def stop(self):
         self.stopped = True
         self.graph.stop()
 
-def _get_available_devices(queue: multiprocessing.Queue):
-    graph = FilterGraph()
-    queue.put(graph.get_input_devices())
+    def _get_available_devices(self):
+        self.graph.get_input_devices()
 
-def get_available_devices():
-    queue = multiprocessing.Queue()
-    p = multiprocessing.Process(target=_get_available_devices,args=(queue,))
-    p.start()
-    p.join()
-    return queue.get()
 
 img_grab_obj = ImgGrab()
