@@ -11,7 +11,7 @@ from enum import Enum
 
 from dependencies.modules.commands import Command as CommandEnum, CommandResult
 from dependencies.modules.commands import CommandArgs
-from dependencies.globals import command_executor
+from dependencies.globals import command_executor, command_executor_ws
 
 class ResponseType(Enum):
     FILE_RESPONSE = "FILE_RESPONSE"
@@ -135,23 +135,12 @@ class WebSocketClient:
         stream_ws_url = f"ws://{self.base_url}/io-target/ws/stream/response?command_id={command.id}&target_id={self.target_id}&access_key={self.access_key}"
         try:
             async with websockets.connect(stream_ws_url) as ws:
-                now = time.time()
-                while True:
-                    # Check if the WebSocket is still open
-                    if ws.open:
-                        await ws.send(b'I')
-                        time.sleep(1)
-                        if time.time() - now > 100:
-                            break
-                    else:
-                        print("WebSocket connection is closed.")
-                        break
+                await command_executor_ws(command.text, args=command.command_args, websocket=ws)
         except websockets.exceptions.ConnectionClosedError as e:
             print(f"WebSocket connection was closed unexpectedly: {e}")
         except Exception as e:
             print(f"An error occurred: {e}")
         finally:
-            # Any cleanup can go here
             print("Stream response handler completed.")
             
 async def main():

