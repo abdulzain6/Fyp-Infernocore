@@ -1,5 +1,5 @@
 from api.lib.database.redis_data_stores import RedisCommandStore
-from .lib.database import UserDBManager, TargetDBManager, TargetStatusManager
+from .lib.database import UserDBManager, TargetDBManager, TargetStatusManager, UserFileManager
 from redis import asyncio as aioredis
 import os
 import redis
@@ -14,6 +14,9 @@ user_db_manager = UserDBManager(
     os.getenv("MONGODB_URL"), os.getenv("DATABASE_NAME", "infernocore")
 )
 target_db_manager = TargetDBManager(
+    os.getenv("MONGODB_URL"), os.getenv("DATABASE_NAME", "infernocore")
+)
+file_manager = UserFileManager(
     os.getenv("MONGODB_URL"), os.getenv("DATABASE_NAME", "infernocore")
 )
 target_status_manager = TargetStatusManager(redis_client)

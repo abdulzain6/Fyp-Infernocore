@@ -1,8 +1,10 @@
+import io
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from ..auth import get_current_user
-from ..globals import target_db_manager, user_db_manager, target_status_manager
+from ..globals import target_db_manager, user_db_manager, target_status_manager, file_manager
 from api.lib.database import TargetModel
 import logging
 import uuid
@@ -101,6 +103,32 @@ def remove_user_from_target(target_id: str, user_id: str, current_user=Depends(g
 def get_my_targets(current_user=Depends(get_current_user)):
     targets = target_db_manager.get_targets_accessible_by_user(current_user['user_id'])
     return targets
+
+@router.get("/files")
+def get_all_files(current_user=Depends(get_current_user)):
+    targets = target_db_manager.get_targets_accessible_by_user(current_user['user_id'])
+    all_files = []
+    for target in targets:
+        all_files.extend(file_manager.list_files_metadata(target.target_id))
+    return all_files
+
+@router.get("/file/download")
+def download_file(target_id: str, file_ref: str, current_user=Depends(get_current_user)):
+    accessible_targets = target_db_manager.get_targets_accessible_by_user(current_user['user_id'])
+    accessible_target_ids = {str(target.target_id) for target in accessible_targets}
+
+    if target_id not in accessible_target_ids:
+        raise HTTPException(status_code=400, detail="Target not accessible")
+    
+    byte_data, file_name = file_manager.get_file_by_target_id(target_id=target_id, file_ref=file_ref)
+    if not byte_data:
+        raise HTTPException(status_code=400, detail="File not found")
+    
+    headers = {
+        "Content-Disposition": f"attachment; filename={file_name}"
+    }
+    return StreamingResponse(io.BytesIO(byte_data), media_type="application/octet-stream", headers=headers)
+
 
 @router.get("/online")
 def get_online_accessible_targets(current_user=Depends(get_current_user)):
