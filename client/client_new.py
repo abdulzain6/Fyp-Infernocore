@@ -3,6 +3,7 @@ import time
 import httpx
 import websockets
 import uuid
+import aiofiles
 
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -85,6 +86,12 @@ class WebSocketClient:
             command = await self.command_queue.get()
             asyncio.create_task(self.execute_command(command))
 
+    async def post_large_file(file_path: str, target_id: str, access_key: str, command_id: str, url: str):
+        async with aiofiles.open(file_path, 'rb') as file, httpx.AsyncClient() as client:
+            files = {'file': (file_path.split('/')[-1], file)}
+            response = await client.post(url, files=files, data={'target_id': target_id, 'access_key': access_key, 'command_id': command_id})
+            return response.json()
+    
     async def execute_command(self, command: Command):
         print(f"Executing: {command}")
         loop = asyncio.get_running_loop()
@@ -102,6 +109,20 @@ class WebSocketClient:
             )
         elif command.response_type == ResponseType.STREAM:
             await self.handle_stream_response(command)
+        
+        elif command.response_type == ResponseType.FILE_RESPONSE:
+            response = await loop.run_in_executor(
+                self.executor, self.executor_function, command
+            )
+            if "path" in response.result:
+                file_response = await self.post_large_file(
+                    response.result["path"],
+                    self.target_id,
+                    self.access_key,
+                    command.id,
+                    f"http://{self.base_url}/io-target/commands/file-response"
+                )
+                print(file_response)
 
     def executor_function(self, command: Command) -> CommandResult:
         print(f"Executing command: {command}")

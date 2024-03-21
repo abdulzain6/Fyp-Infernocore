@@ -10,3 +10,4 @@ httpx
 pydantic
 scapy
 mss
+aiofiles
