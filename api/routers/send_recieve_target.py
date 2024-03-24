@@ -83,7 +83,7 @@ def receive_file_command_response(file: UploadFile, target_id: str, access_key: 
         file_model = file_manager.add_file(target.target_id, target.name, file.file.read(), filename=file.filename)
     except Exception as e:
         print(F"Error: {e}")
-        raise HTTPException(status_code=500, detail="Internal error saving file")
+        raise HTTPException(status_code=500, detail="Internal error saving file. Error: e")
 
     try:
         if command_store.store_command_response(command_id, RecieveTextResponse(command_id=command_id, access_key=access_key, target_id=target_id, response=CommandResult(result={"file_ref" : file_model.file_reference}, success=True))):

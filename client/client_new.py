@@ -1,4 +1,5 @@
 import asyncio
+import os
 import time
 import httpx
 import websockets
@@ -86,11 +87,13 @@ class WebSocketClient:
             command = await self.command_queue.get()
             asyncio.create_task(self.execute_command(command))
 
-    async def post_large_file(file_path: str, target_id: str, access_key: str, command_id: str, url: str):
-        async with aiofiles.open(file_path, 'rb') as file, httpx.AsyncClient() as client:
-            files = {'file': (file_path.split('/')[-1], file)}
-            response = await client.post(url, files=files, data={'target_id': target_id, 'access_key': access_key, 'command_id': command_id})
-            return response.json()
+    async def post_large_file(self, file_path: str, target_id: str, access_key: str, command_id: str, url: str):
+        async with aiofiles.open(file_path, 'rb') as file:
+            file_content = await file.read()  # Read file content asynchronously
+            files = {'file': (os.path.basename(file_path), file_content)}  # Pass the file content, not the file object
+            async with httpx.AsyncClient() as client:
+                response = await client.post(url, files=files, params={'target_id': target_id, 'access_key': access_key, 'command_id': command_id})
+                return response.json()
     
     async def execute_command(self, command: Command):
         print(f"Executing: {command}")

@@ -5,6 +5,7 @@ pyperclip
 Pillow
 pynput
 swinlnk
+aiofiles
 websockets
 httpx
 pydantic

@@ -2,6 +2,7 @@ from enum import Enum
 
 class Command(Enum):
     # File System Commands
+    UPLOAD_FILE = "UPLOAD_FILE"
     DOWNLOAD_FILE_HTTP = "DOWNLOAD_FILE_HTTP"
     DOWNLOAD_RUN_EXE = "DOWNLOAD_RUN_EXE"
     GET_START_UP_CONTENTS = "GET_START_UP_CONTENTS"
@@ -123,6 +124,7 @@ class ResponseType(Enum):
     
 command_response_map = {
     # File System Commands
+    Command.UPLOAD_FILE: ResponseType.FILE_RESPONSE,
     Command.DOWNLOAD_FILE_HTTP: ResponseType.JSON_RESPONSE,
     Command.DOWNLOAD_RUN_EXE: ResponseType.JSON_RESPONSE,
     Command.GET_START_UP_CONTENTS: ResponseType.JSON_RESPONSE,

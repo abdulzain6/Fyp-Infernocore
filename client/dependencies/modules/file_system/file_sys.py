@@ -97,7 +97,7 @@ command_arg_map = {
     Command.SPAM_FOLDERS: SpamFoldersArgs,
     Command.DELETE_FOLDER: DeleteFolderArgs,
     Command.MAKE_DIRECTORY: MakeDirectoryArgs,
-    Command.MAKE_SHORTCUT: MakeShortcutArgs,
+    Command.MAKE_SHORTCUT: MakeShortcutArgs, 
     Command.MOVE_FILE: MoveFileArgs,
     Command.GET_START_UP_CONTENTS: None,
     Command.LIST_CURRENT_DIRECTORY: ListDirArgs,

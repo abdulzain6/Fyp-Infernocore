@@ -15,6 +15,7 @@ class FileModel(BaseModel):
     target_id: str
     target_name: str
     file_reference: str
+    file_name: str
 
 class UserDBManager:
     def __init__(
@@ -63,17 +64,9 @@ class UserFileManager:
         self.file_collection = self.db["file_metadata"]
 
     def add_file(self, target_id: str, target_name: str, file_data: bytes, filename: str) -> FileModel:
-        # Check if the file metadata already exists for the given target_id and target_name
-        if self.file_collection.find_one({"target_id": target_id, "target_name": target_name}):
-            raise ValueError("File with this target_name already exists for the target ID.")
-
-        # Store the file in GridFS
         file_id = self.gridfs_bucket.upload_from_stream(filename, file_data)
-
-        # Create and store file metadata
-        file_model = FileModel(target_id=target_id, target_name=target_name, file_reference=str(file_id))
+        file_model = FileModel(target_id=target_id, target_name=target_name, file_reference=str(file_id), file_name=filename)
         self.file_collection.insert_one(file_model.model_dump())
-
         return file_model
 
     def get_file_by_target_id(self, target_id: str, file_ref: str) -> Optional[bytes]:
