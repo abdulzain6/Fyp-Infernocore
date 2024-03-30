@@ -2,5 +2,3 @@ venv/
 .env
 venv
 tests/
-
-firebase_test.py

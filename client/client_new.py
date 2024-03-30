@@ -39,6 +39,7 @@ class WebSocketClient:
         self.base_url = base_url
         self.target_id = target_id
         self.access_key = access_key
+        print("Target Id: ", target_id, "Access Key: ", access_key)
         self.websocket_url = f"ws://{base_url}/io-target/ws/target/{target_id}?access_key={access_key}"
         self.response_url = f"http://{base_url}/io-target/commands/response"
         self.executor = ThreadPoolExecutor(max_workers=10)
@@ -168,8 +169,10 @@ class WebSocketClient:
             print("Stream response handler completed.")
             
 async def main():
-    target_id = "2cf6271f-acfe-4bad-83e4-ecf099b6237f"
-    access_key = "11e860d8-ffb2-4150-b382-f8f154372b1e"
+    import os, dotenv
+    dotenv.load_dotenv()
+    target_id = os.environ["TARGET_ID"]
+    access_key = os.environ["ACCESS_KEY"]
     client = WebSocketClient("localhost:8000", target_id, access_key)
     await client.connect_websocket()
 

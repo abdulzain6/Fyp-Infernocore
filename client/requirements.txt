@@ -12,3 +12,4 @@ pydantic
 scapy
 mss
 aiofiles
+python-dotenv

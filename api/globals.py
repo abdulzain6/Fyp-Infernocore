@@ -5,7 +5,7 @@ import os
 import redis
 import dotenv
 
-dotenv.load_dotenv()
+dotenv.load_dotenv("api/.env")
 redis_client_aio = aioredis.Redis.from_url(os.getenv("REDIS_URL"))
 redis_client = redis.Redis.from_url(os.getenv("REDIS_URL"))
 

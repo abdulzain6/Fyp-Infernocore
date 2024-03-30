@@ -91,7 +91,7 @@ class BlockInput(ICommandModule):
 
     def block_secs(self, args: BlockDurationArgs):
         if self.is_elevated():
-            thread = threading.Thread(target=self.block_for_duration_elevated, args=(args.seconds,))
+            thread = multiprocessing.Process(target=self.block_for_duration_elevated, args=(args.seconds,))
             thread.start()
             return CommandResult(success=True, result=f"Input will be blocked for {args.seconds} seconds.")
         else:
