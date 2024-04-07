@@ -2,8 +2,7 @@ from asyncio import CancelledError, create_task
 import datetime
 from fastapi import HTTPException, UploadFile, WebSocket, APIRouter, WebSocketDisconnect
 from fastapi.security import APIKeyQuery
-from ..globals import redis_client_aio, target_db_manager, target_status_manager, command_store, file_manager
-from ..config import MAX_COMMAND_LIFE
+from ..globals import redis_client_aio, target_db_manager, target_status_manager, command_store, file_manager, MAX_COMMAND_LIFE
 from api.common import CommandResult, CommandToSend, RecieveTextResponse
 
 

@@ -1,13 +1,21 @@
-import io
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
 from ..auth import get_current_user
-from ..globals import target_db_manager, user_db_manager, target_status_manager, file_manager
+from ..globals import target_db_manager, user_db_manager, target_status_manager, file_manager, BASE_URL, CLIENT_FOLDER
 from api.lib.database import TargetModel
+from pydantic import BaseModel
+
 import logging
+import io
 import uuid
+import shutil
+import subprocess
+import tempfile
+import os
+import json
+import base64
 
 router = APIRouter()
 
@@ -26,10 +34,70 @@ class TargetModelInput(BaseModel):
     name: str
 
 
-
 def user_can_access_target(user_id: str, target_id: str) -> bool:
     return target_db_manager.is_target_accessible_by_user(target_id, user_id)
 
+
+
+class Config(BaseModel):
+    TARGET_ID: str
+    ACCESS_KEY: str
+    icon: Optional[str] = None  # Base64 encoded icon file, now optional
+
+
+@router.post("/create-executable/")
+def create_executable(config: Config):
+    try:
+        # Create temporary directory
+        temp_dir = tempfile.mkdtemp()
+
+        # Set up paths for folder copy
+        print("Client:", CLIENT_FOLDER)
+        destination_folder = os.path.join(temp_dir, "client")
+        print("Dest:", destination_folder)
+        shutil.copytree(CLIENT_FOLDER, destination_folder)
+
+    
+        # Prepare PyInstaller command
+        client_py = os.path.join(destination_folder, "client.py")
+        with open(client_py, "r") as fp:
+            client_py_data = fp.read()
+            client_py_data = client_py_data.replace("TARGETID_TO_REPLACE", config.TARGET_ID)
+            client_py_data = client_py_data.replace("ACCESS_KEY_TO_REPLACE", config.ACCESS_KEY)
+            client_py_data = client_py_data.replace("BASE_URL_TO_REPLACE", BASE_URL)
+
+        with open(client_py, "w") as fp:
+            fp.write(client_py_data)
+
+
+        print("Running pyinstaller")
+        dist_path = os.path.join(temp_dir, "dist")  # Set output directory for the executable
+        command = [
+            "pyinstaller", "--noconfirm", "--onefile", "--windowed",
+            f"--distpath={dist_path}", client_py  # Specify output directory
+        ]
+
+        # If an icon is provided, decode and use it
+        if config.icon:
+            icon_path = os.path.join(temp_dir, 'icon.ico')
+            with open(icon_path, "wb") as icon_file:
+                icon_file.write(base64.b64decode(config.icon))
+            command.insert(3, f"--icon={icon_path}")
+
+        # Execute PyInstaller
+        subprocess.run(command, check=True, cwd=temp_dir)
+
+        exe_file = next((f for f in os.listdir(dist_path) if f.endswith('.exe')), None)
+        if not exe_file:
+            raise HTTPException(status_code=404, detail="Executable file not found.")
+
+        exe_path = os.path.join(dist_path, exe_file)
+        return FileResponse(path=exe_path, filename=exe_file)
+    finally:
+        # Clean up the temporary files
+        #print(temp_dir, exe_path)
+        #shutil.rmtree(temp_dir)
+        ...
 
 @router.post("/", response_model=TargetResponse)
 def create_target(

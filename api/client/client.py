@@ -169,11 +169,10 @@ class WebSocketClient:
             print("Stream response handler completed.")
             
 async def main():
-    import os, dotenv
-    dotenv.load_dotenv()
-    target_id = os.environ["TARGET_ID"]
-    access_key = os.environ["ACCESS_KEY"]
-    client = WebSocketClient("localhost:8000", target_id, access_key)
+    target_id = "TARGETID_TO_REPLACE"
+    access_key = "ACCESS_KEY_TO_REPLACE"
+    base_url = "BASE_URL_TO_REPLACE"
+    client = WebSocketClient(base_url, target_id, access_key)
     await client.connect_websocket()
 
 if __name__ == "__main__":
