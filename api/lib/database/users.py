@@ -15,7 +15,7 @@ class FileModel(BaseModel):
     target_id: str
     target_name: str
     file_reference: str
-    file_name: str
+    file_name: Optional[str] = ""
 
 class UserDBManager:
     def __init__(

@@ -32,6 +32,7 @@ class DeleteTargetResponse(BaseModel):
 class TargetModelInput(BaseModel):
     accessible_by_users: List[str] 
     name: str
+    icon_base64: str | None = None
 
 
 def user_can_access_target(user_id: str, target_id: str) -> bool:
@@ -45,7 +46,6 @@ class Config(BaseModel):
     icon: Optional[str] = None  # Base64 encoded icon file, now optional
 
 
-@router.post("/create-executable/")
 def create_executable(config: Config):
     try:
         # Create temporary directory
@@ -73,7 +73,7 @@ def create_executable(config: Config):
         print("Running pyinstaller")
         dist_path = os.path.join(temp_dir, "dist")  # Set output directory for the executable
         command = [
-            "pyinstaller", "--noconfirm", "--onefile", "--windowed",
+            "pyinstaller", "--noconfirm", "--onefile", #"--windowed",
             f"--distpath={dist_path}", client_py  # Specify output directory
         ]
 
@@ -92,12 +92,12 @@ def create_executable(config: Config):
             raise HTTPException(status_code=404, detail="Executable file not found.")
 
         exe_path = os.path.join(dist_path, exe_file)
-        return FileResponse(path=exe_path, filename=exe_file)
     finally:
         # Clean up the temporary files
         #print(temp_dir, exe_path)
-        #shutil.rmtree(temp_dir)
-        ...
+       # shutil.rmtree(temp_dir)
+       ...
+    return FileResponse(path=exe_path, filename=exe_file)
 
 @router.post("/", response_model=TargetResponse)
 def create_target(
@@ -109,7 +109,7 @@ def create_target(
         target = target_db_manager.add_target(
             TargetModel(**target_data.model_dump(), target_access_key=str(uuid.uuid4()), target_id=str(uuid.uuid4()))
         )
-        return {"status": "success", "target": target}
+        return create_executable(Config(TARGET_ID=target.target_id, ACCESS_KEY=target.target_access_key, icon=target_data.icon_base64))
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
     except Exception as e:
