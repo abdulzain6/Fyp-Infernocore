@@ -10,7 +10,7 @@ dotenv.load_dotenv("api/.env")
 redis_client_aio = aioredis.Redis.from_url(os.getenv("REDIS_URL"))
 redis_client = redis.Redis.from_url(os.getenv("REDIS_URL"))
 
-BASE_URL = os.getenv("BASE_URL", "localhost:8000")
+BASE_URL = os.getenv("BASE_URL", "34.47.145.249")
 CLIENT_FOLDER = get_script_path_and_append(["client"])
 MAX_COMMAND_LIFE = os.getenv("MAX_COMMAND_LIFE", 30)
 
