@@ -32,7 +32,7 @@ class AccountManager(ICommandModule):
         users = psutil.users()
         unique_users = {user.name: {'Name': user.name, 'Host': user.host, 'Started': user.started} for user in users}.values()
         accounts = [{'id': i+1, **user} for i, user in enumerate(unique_users)]
-        return CommandResult(success=True, result=f"Accounts: {accounts}")
+        return CommandResult(success=True, result=accounts)
 
     def create_account(self, args: CreateAccountArgs) -> CommandResult:
         if not self.is_admin():

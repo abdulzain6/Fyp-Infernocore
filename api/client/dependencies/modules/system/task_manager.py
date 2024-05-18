@@ -35,13 +35,13 @@ class TaskManager(ICommandModule):
     def disable(self) -> CommandResult:
         if platform.system() != "Windows" or not self.is_elevated:
             return CommandResult(success=False, result="Operation not supported or elevated privileges required.")
-        self.change_dword(0)
+        self.change_dword(1)
         return CommandResult(success=True, result="Task Manager disabled.")
 
     def enable(self) -> CommandResult:
         if platform.system() != "Windows" or not self.is_elevated:
             return CommandResult(success=False, result="Operation not supported or elevated privileges required.")
-        self.change_dword(1)
+        self.change_dword(0)
         return CommandResult(success=True, result="Task Manager enabled.")
 
     def change_dword(self, arg0):

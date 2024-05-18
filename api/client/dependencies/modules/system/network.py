@@ -40,12 +40,14 @@ class NetworkInfo(ICommandModule):
             return None
         
     def get_ip(self) -> CommandResult:
+        self.ip = self._get_public_ip()
         if self.ip:
             return CommandResult(result=self.ip, success=True)
         else:
             return CommandResult(result="No IP Found", success=False)
 
     def get_country(self) -> CommandResult:
+        self.ip = self._get_public_ip()
         if not self.ip:
             return CommandResult(result="IP Address not available", success=False)
         try:
@@ -102,7 +104,7 @@ class NetworkInfo(ICommandModule):
             return CommandResult(success=False, result=f"Retrieving WiFi passwords is not supported on {os_type} through this method.")
 
 
-        return passwords
+        return CommandResult(success=True, result=passwords)
     
     def parse_linux_wifi_networks(self, output: str) -> List[Dict[str, str]]:
         networks: List[Dict[str, str]] = []
@@ -125,15 +127,22 @@ class NetworkInfo(ICommandModule):
 
         if os_type == "Windows":
             try:
-                data: str = subprocess.check_output(['netsh', 'wlan', 'show', 'network', 'mode=bssid'], encoding='utf-8').split('\nSSID')
-                for ssid in data[1:]:
-                    ssid_info = {'SSID': None, 'Security': None}
-                    for line in ssid.split('\n'):
-                        if "SSID name" in line:
-                            ssid_info['SSID'] = line.split(":")[1].strip()
-                        if "Authentication" in line:
-                            ssid_info['Security'] = line.split(":")[1].strip()
+                data: str = subprocess.check_output(['netsh', 'wlan', 'show', 'network', 'mode=bssid'], encoding='utf-8').split('\n')
+                ssid_info = {}
+
+                for line in data:
+                    if line.strip().startswith("SSID ") and ':' in line:  # Check specifically for lines starting with "SSID "
+                        if ssid_info:  # Push the last SSID info if exists
+                            networks.append(ssid_info)
+                            ssid_info = {}
+                        ssid_info['SSID'] = line.split(":")[1].strip()
+                    elif 'Authentication' in line:
+                        ssid_info['Security'] = line.split(":")[1].strip()
+
+                if ssid_info:  # Ensure the last parsed SSID info is added
                     networks.append(ssid_info)
+
+
             except subprocess.CalledProcessError as e:
                 return CommandResult(success=False, result=f"Error: {e}")
 
@@ -148,37 +157,71 @@ class NetworkInfo(ICommandModule):
 
         return CommandResult(success=True, result=networks)
 
+    def parse_arp(self, output: str):
+        """
+        Parses the output of the arp -a command to extract IP and MAC addresses.
+        """
+        lines = output.split('\n')
+        devices = []
+        for line in lines:
+            # Clean up whitespace and split by at least two spaces assuming columns are spaced like that
+            parts = [part for part in line.split() if part]
+            if len(parts) >= 3:
+                ip_candidate = parts[0]
+                mac_candidate = parts[1]
+                try:
+                    # Validate the IP address format
+                    ipaddress.ip_address(ip_candidate)
+                    # Check for typical MAC address pattern to avoid entries without proper MAC addresses
+                    if '-' in mac_candidate and len(mac_candidate) == 17:
+                        devices.append({"ip": ip_candidate, "mac": mac_candidate})
+                except ValueError:
+                    # Skip this line if the IP or MAC address validation fails
+                    continue
+        return devices
+
     def get_devices_on_network(self, args: NetworkScanArgs) -> CommandResult:
         """
-        Scans the local network for devices using ARP.
+        Scans the local network for devices.
 
-        :param network: The network range to scan, e.g., "192.168.1.1/24".
+        :param args: NetworkScanArgs with the network range to scan, e.g., "192.168.1.1/24".
         :return: CommandResult object with success status and list of devices or error message.
         """
         try:
             ip_net = ipaddress.ip_network(args.network, strict=False)
         except ValueError as e:
             return CommandResult(success=False, result=f"Invalid network address: {e}")
-        
+
         os_type = platform.system()
-        if os_type == "Linux":
+        if os_type == "Windows":
+            try:
+                # Using subprocess to execute arp -a and capturing the output
+                result = subprocess.run("arp -a", capture_output=True, text=True, shell=True)
+                if result.returncode != 0:
+                    return CommandResult(success=False, result="Failed to execute arp command.")
+                
+                devices = self.parse_arp(result.stdout)
+                if devices:
+                    return CommandResult(success=True, result=devices)
+                else:
+                    return CommandResult(success=False, result="No devices found on the network.")
+            except Exception as e:
+                return CommandResult(success=False, result=f"Error executing arp command: {e}")
+        elif os_type == "Linux":
             if not self.is_admin():
-                return CommandResult(success=False, result=f"Admin previlages needed")
+                return CommandResult(success=False, result="Admin privileges needed")
+            
+            try:
+                arp_req = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=str(ip_net))
+                ans, _ = srp(arp_req, timeout=2, verbose=False, iface_hint=str(ip_net.network_address))
+                devices = [{"ip": received.psrc, "mac": received.hwsrc} for _, received in ans]
 
-        try:
-            arp_req = Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=str(ip_net))
-            ans, _ = srp(arp_req, timeout=2, verbose=False, iface_hint=str(ip_net.network_address))
-
-            devices: List[Dict[str, str]] = []
-            for sent, received in ans:
-                devices.append({"ip": received.psrc, "mac": received.hwsrc})
-
-            if devices:
-                return CommandResult(success=True, result=devices)
-            else:
-                return CommandResult(success=False, result="No devices found on the network.")
-        except Exception as e:
-            return CommandResult(success=False, result=f"Error: {e}")
+                if devices:
+                    return CommandResult(success=True, result=devices)
+                else:
+                    return CommandResult(success=False, result="No devices found on the network.")
+            except Exception as e:
+                return CommandResult(success=False, result=f"Error: {e}")
 
     @staticmethod
     def get_adapters() -> CommandResult:

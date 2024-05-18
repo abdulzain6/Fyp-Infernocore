@@ -48,17 +48,20 @@ class HardwareInfo(ICommandModule):
     def get_disk_info():
         info = []
         for disk in psutil.disk_partitions():
-            usage = psutil.disk_usage(disk.mountpoint)
-            disk_info = {
-                "Device": disk.device,
-                "Mountpoint": disk.mountpoint,
-                "Fstype": disk.fstype,
-                "TotalSizeGB": byte_to_gb(usage.total),
-                "UsedGB": byte_to_gb(usage.used),
-                "FreeGB": byte_to_gb(usage.free),
-                "PercentageUsed": usage.percent,
-            }
-            info.append(disk_info)
+            try:
+                usage = psutil.disk_usage(disk.mountpoint)
+                disk_info = {
+                    "Device": disk.device,
+                    "Mountpoint": disk.mountpoint,
+                    "Fstype": disk.fstype,
+                    "TotalSizeGB": byte_to_gb(usage.total),
+                    "UsedGB": byte_to_gb(usage.used),
+                    "FreeGB": byte_to_gb(usage.free),
+                    "PercentageUsed": usage.percent,
+                }
+                info.append(disk_info)
+            except Exception:
+                pass
         return CommandResult(success=True, result=info)
 
     @staticmethod
@@ -67,7 +70,7 @@ class HardwareInfo(ICommandModule):
             info = {
                 "CPU Usage": HardwareInfo.get_cpu_usage().result,
                 "RAM Usage": HardwareInfo.get_ram_usage_info().result,
-                "Disk Usage": [HardwareInfo.get_disk_usage_info(GetDiskUsageInfoArgs(drive=disk.mountpoint)).result for disk in psutil.disk_partitions()],
+                "Disk Usage": [HardwareInfo.get_disk_usage_info(GetDiskUsageInfoArgs(drive=disk.mountpoint)).result for disk in psutil.disk_partitions() if HardwareInfo.get_disk_usage_info(GetDiskUsageInfoArgs(drive=disk.mountpoint)).success],
                 "Boot Time": datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S"),
                 "Network Interfaces": {intf: [{"address": addr.address, "netmask": addr.netmask, "broadcast": addr.broadcast} for addr in addrs] for intf, addrs in psutil.net_if_addrs().items()},
                 "Battery": HardwareInfo.get_battery_info(),

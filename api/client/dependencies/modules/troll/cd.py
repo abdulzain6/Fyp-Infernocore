@@ -12,8 +12,8 @@ class EjectCdArgs(CommandArgs):
 
 command_arg_map = {
     Command.EJECT_CD: None,
-    Command.EJECT_CD_CONTINOUS: None,
-    Command.STOP_CD_EJECTOR: EjectCdArgs,
+    Command.EJECT_CD_CONTINOUS: EjectCdArgs,
+    Command.STOP_CD_EJECTOR: None,
 }
 
 class Cd(ICommandModule):

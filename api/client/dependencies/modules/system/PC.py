@@ -45,7 +45,7 @@ class Pc(ICommandModule):
     def logout() -> CommandResult:
         try:
             if platform.system() == "Windows":
-                subprocess.run("shutdown /l /t 0", shell=True)
+                subprocess.run(["shutdown", "/l"], check=False)  # No /t 0 needed
             else:
                 return CommandResult(success=False, result="Logout not supported on this platform")
             return CommandResult(success=True, result="Logout initiated")

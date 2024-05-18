@@ -38,6 +38,7 @@ def get_command_response(command_id: str, user_id = Depends(get_user_id)):
         if not target or user_id not in target.accessible_by_users:
             raise HTTPException(status_code=403, detail="Not authorized to access this target")
         
+        print(response)
         return response.response
     else:
         raise HTTPException(status_code=404, detail="Response not found")

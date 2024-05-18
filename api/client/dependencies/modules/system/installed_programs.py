@@ -12,7 +12,7 @@ from ..commands import Command, CommandArgs, ICommandModule, CommandResult
 
 
 class Program(BaseModel):
-    id: str
+    id: str | int
     name: str
     uninstall_string: str
     publisher: str
@@ -36,7 +36,7 @@ class Programs(ICommandModule):
                 key_data = self._get_info_from_keys(
                     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall", keys)
                 
-                programs = []
+                programs: list[Program] = []
                 i = 0
                 for data in key_data:
                     try:
@@ -46,7 +46,7 @@ class Programs(ICommandModule):
                     except KeyError:
                         pass
                     
-                return CommandResult([program.model_dump for program in programs], success=True)
+                return CommandResult(result=[program.model_dump() for program in programs], success=True)
             else:
                 return CommandResult(result="Not supported on linux", success=False)
         except Exception as e:

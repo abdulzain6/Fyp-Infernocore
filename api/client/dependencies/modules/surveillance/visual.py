@@ -1,6 +1,7 @@
 import asyncio
 import contextlib
 import ctypes
+import io
 import websockets
 import base64
 from io import BytesIO
@@ -65,7 +66,10 @@ class Visuals(ICommandModule):
             image = ImageGrab.grab()
             h, w = image.size
             mode = image.mode
-            image_base64 = base64.b64encode(image.tobytes()).decode('ascii')
+            buffer = io.BytesIO()
+            image.save(buffer, format='PNG')  # You can change 'PNG' to 'JPEG' if preferred
+            image_png = buffer.getvalue()
+            image_base64 = base64.b64encode(image_png).decode('ascii')
 
             return CommandResult(success=True, result={"size": (h, w), "mode": mode, "image": image_base64})
         except Exception as e:
