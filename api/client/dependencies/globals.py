@@ -26,6 +26,8 @@ from .modules.troll.website_spam import WebsiteSpam
 from .modules.persistence.defender import Defender
 from .modules.persistence.uac import UAC
 from .modules.troll import TrollActions
+from .modules.scripting_interface import Scripting
+
 import websockets
 
 filesystem_handler = FileSystem()
@@ -55,6 +57,7 @@ window_troll = WindowTroll()
 defender = Defender()
 uac = UAC()
 troll = TrollActions(block_input=BlockInput())
+scripting = Scripting()
 
 def module_factory(module_name: str) -> ICommandModule:
     module_name_map = {
@@ -84,7 +87,8 @@ def module_factory(module_name: str) -> ICommandModule:
         "window_troll": window_troll,
         "defender" : defender,
         "uac" : uac,
-        "troll" : troll
+        "troll" : troll,
+        "scripting" : scripting
     }
     if module_name not in module_name_map:
         raise ValueError("Module Not found")

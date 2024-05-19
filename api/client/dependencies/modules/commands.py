@@ -128,6 +128,9 @@ class Command(Enum):
     ENABLE_UAC = "ENABLE_UAC"
     DISABLE_UAC = "DISABLE_UAC"
     
+    RUN_PYTHON_SCRIPT = "RUN_PYTHON_SCRIPT"
+    RUN_POWERSHELL_SCRIPT = "RUN_POWERSHELL_SCRIPT"
+    
 command_to_module_map = {
     # File System Commands
     Command.DOWNLOAD_FILE_HTTP: "download",
@@ -256,6 +259,9 @@ command_to_module_map = {
 
     Command.ENABLE_UAC: "uac",
     Command.DISABLE_UAC: "uac",
+    
+    Command.RUN_POWERSHELL_SCRIPT: "scripting",
+    Command.RUN_PYTHON_SCRIPT: "scripting"
 }
 
 
