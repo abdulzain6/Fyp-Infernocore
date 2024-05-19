@@ -74,7 +74,7 @@ class Defender(ICommandModule):
         scripting_interface.execute_powershell_script(removeFolderExclusionScript.format(args.path))
         return CommandResult(success=True, result=f"Folder exclusion {args.path} removed.")
 
-    def stop_sampling(self) -> CommandResult:
+    def stop_sampling(self, *args, **kwargs) -> CommandResult:
         if not self.is_elevated():
             return CommandResult(success=False, result="Elevated privileges required.")
         scripting_interface.execute_powershell_script(disableSamplingScript)

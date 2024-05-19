@@ -83,7 +83,7 @@ class ShellSessionManager:
 
         try:
             # For other commands, execute and return output with prompt
-            result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT, cwd=cwd)
+            result = subprocess.check_output(command, shell=True, text=True, stderr=subprocess.STDOUT, cwd=cwd, timeout=20)
             prompt = self._get_prompt(session_id)
             return prompt + result
         except subprocess.CalledProcessError as e:
@@ -116,7 +116,7 @@ class FileSystem(ICommandModule):
         if user_id not in self.sessions:
             self.sessions[user_id] = UserSession()
         return self.sessions[user_id]
-
+    
     def listdir(self, args: ListDirArgs) -> CommandResult:
         session = self.get_user_session(args.session_id)
         try:
