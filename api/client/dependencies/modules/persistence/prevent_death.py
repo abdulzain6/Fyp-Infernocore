@@ -42,7 +42,7 @@ class ProcessManager:
     def run(self):
         child_processes = []
         for i in range(self.number_of_children):
-            process = multiprocessing.Process(target=self.child_task, args=(self.main_pid, i))
+            process = multiprocessing.Process(target=self.child_task, args=(self.main_pid, i), daemon=True)
             process.start()
             child_processes.append(process)
         # Start monitoring thread

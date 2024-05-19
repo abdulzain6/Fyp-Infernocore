@@ -8,7 +8,8 @@ class RunSingle:
         try:
             os.remove(fileName)
             self.f = open(fileName, "w")
-        except WindowsError:
+        except (OSError):
+            print("exiting")
             sys.exit()
             
 def byte_to_gb(bytes):

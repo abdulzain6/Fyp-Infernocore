@@ -13,3 +13,4 @@ scapy
 mss
 aiofiles
 python-dotenv
+scalar-fastapi

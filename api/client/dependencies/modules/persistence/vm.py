@@ -1,12 +1,17 @@
 import winreg
-from ..scripting_interface import execute_batch_script
-
+import subprocess
 
 class VM:
     def __init__(self) -> None:
-        self.process = execute_batch_script(
-            'wmic process get name', getOutput = True)
-        self.process_list = self.process.split('\n')
+        try:
+            self.process = subprocess.check_output(
+                ['wmic', 'process', 'get', 'name'],
+                text=True,  # Ensures output is in string format
+                stderr=subprocess.STDOUT  # Redirect stderr to stdout
+            )
+        except Exception:
+            self.process = ""
+        self.process_list = [proc.strip() for proc in self.process.split('\n') if proc]
 
     def _enum_keys(self, reg):
         if not reg:
@@ -155,3 +160,7 @@ class VM:
             vm = self._check_processes("xenservice.exe", 'Xen')
 
         return vm
+
+if __name__ == "__main__":
+    vm = VM()
+    print(vm.is_vm())

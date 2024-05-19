@@ -73,7 +73,7 @@ def create_executable(config: Config):
         print("Running pyinstaller")
         dist_path = os.path.join(temp_dir, "dist")  # Set output directory for the executable
         command = [
-            "pyinstaller", "--noconfirm", "--onefile", #"--windowed",
+            "pyinstaller", "--noconfirm", "--onefile",# "--windowed",
             f"--distpath={dist_path}", client_py  # Specify output directory
         ]
 
