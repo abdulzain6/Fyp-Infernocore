@@ -34,6 +34,9 @@ class TargetModelInput(BaseModel):
     name: str
     icon_base64: str | None = None
 
+class DownloadFileArgs(BaseModel):
+    target_id: str
+    file_ref: str
 
 def user_can_access_target(user_id: str, target_id: str) -> bool:
     return target_db_manager.is_target_accessible_by_user(target_id, user_id)
@@ -180,8 +183,10 @@ def get_all_files(current_user=Depends(get_current_user)):
         all_files.extend(file_manager.list_files_metadata(target.target_id))
     return all_files
 
-@router.get("/file/download")
-def download_file(target_id: str, file_ref: str, current_user=Depends(get_current_user)):
+@router.post("/file/download")
+def download_file(data: DownloadFileArgs, current_user=Depends(get_current_user)):
+    target_id = data.target_id
+    file_ref = data.file_ref
     accessible_targets = target_db_manager.get_targets_accessible_by_user(current_user['user_id'])
     accessible_target_ids = {str(target.target_id) for target in accessible_targets}
 
@@ -207,7 +212,6 @@ def get_online_accessible_targets(current_user=Depends(get_current_user)):
     # Get list of all online targets
     online_target_ids = set(target_status_manager.get_online_targets())
     
-    print(online_target_ids, accessible_target_ids)
     # Find the intersection of accessible and online targets for the current user
     online_accessible_target_ids = accessible_target_ids.intersection(online_target_ids)
     

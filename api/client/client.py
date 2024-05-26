@@ -127,6 +127,7 @@ class WebSocketClient:
                 self.executor, self.executor_function, command
             )
             if "path" in response.result:
+                is_zip = response.result.get("zip", False)
                 file_response = await self.post_large_file(
                     response.result["path"],
                     self.target_id,
@@ -134,7 +135,19 @@ class WebSocketClient:
                     command.id,
                     f"http://{self.base_url}/io-target/commands/file-response"
                 )
-                print(file_response)
+                if is_zip:
+                    try:
+                        os.remove(response.result["path"])
+                    except:
+                        ...
+                await self.send_text_response(
+                    RecieveTextResponse(
+                        command_id=command.id,
+                        response=CommandResult(result=file_response, success=True),
+                        target_id=self.target_id,
+                        access_key=self.access_key
+                    )
+                )
 
     def executor_function(self, command: Command) -> CommandResult:
         print(f"Executing command: {command}")

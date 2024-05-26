@@ -255,7 +255,7 @@ class FileSystem(ICommandModule):
                     return CommandResult(success=False, result=f"No Args passed")
                 
                 print(f"Executing with {args}")
-                args = command_arg_map[command].model_validate(args.model_dump())
+                args = command_arg_map[command].model_validate(**args.model_dump())
                 return command_func_map_with_args[command](args=args)
         except ValidationError as e:
             return CommandResult(success=False, result=f"Validation error: {e}")

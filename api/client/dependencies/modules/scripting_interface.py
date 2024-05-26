@@ -1,5 +1,5 @@
 import subprocess, os
-import multiprocessing
+import threading, queue
 
 from random import randrange
 from io import StringIO
@@ -48,7 +48,7 @@ def execute_batch_script(script, getOutput = False, wait = False, createNewConso
         p.wait()
 
 def execute_python_script(script: str, timeout: int = 10) -> str:
-    def script_runner(script: str, output: multiprocessing.Queue):
+    def script_runner(script: str, output: queue.Queue):
         f = StringIO()
         with redirect_stdout(f):
             try:
@@ -58,8 +58,8 @@ def execute_python_script(script: str, timeout: int = 10) -> str:
                 return
         output.put(f.getvalue())
 
-    output = multiprocessing.Queue()
-    process = multiprocessing.Process(target=script_runner, args=(script, output))
+    output = queue.Queue()
+    process = threading.Thread(target=script_runner, args=(script, output))
     process.start()
     process.join(timeout)
 

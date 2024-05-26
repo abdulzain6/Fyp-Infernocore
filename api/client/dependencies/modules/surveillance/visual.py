@@ -42,7 +42,7 @@ class Visuals(ICommandModule):
                         compressed_image = buffer.getvalue()
 
 
-                    await websocket.send(base64.b64encode(compressed_image))
+                    await websocket.send(compressed_image)
                     await asyncio.sleep(1/30)  # Control the frame rate
 
         cls.streaming_task = asyncio.create_task(stream())
