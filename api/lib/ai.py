@@ -414,5 +414,3 @@ if __name__ == "__main__":
             "perform a nmap scan using python on the target network"
         )
     )
-    import pip
-    pip.main
